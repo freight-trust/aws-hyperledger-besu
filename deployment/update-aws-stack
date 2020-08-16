@@ -1,0 +1,56 @@
+  Taskdefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: postgres
+      Cpu: 512
+      Memory: 512
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - EC2
+      ContainerDefinitions:
+        - Name: postgres
+          Image: postgres
+          Essential: true
+          MountPoints:
+            - SourceVolume: rexray-vol
+              ContainerPath: /var/lib/postgresql/data
+          PortMappings:
+            - ContainerPort: 3306
+              Protocol: tcp
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LogGroup
+              awslogs-create-group: true
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+      Volumes:
+        - Name: rexray-vol
+          DockerVolumeConfiguration:
+            Autoprovision: true
+            Scope: shared
+            Driver: rexray/ebs
+            DriverOpts:
+              volumetype: gp2
+              size: 5
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref ECSCluster
+      ServiceName: postgres
+      DesiredCount: 1
+      TaskDefinition: !Ref Taskdefinition
+      LaunchType: EC2
+      DeploymentConfiguration:
+        MaximumPercent: 100
+        MinimumHealthyPercent: 0
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          SecurityGroups:
+            - !Ref InstanceSecurityGroup
+          Subnets:
+            - !Ref SubnetId
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: postgres
