@@ -1,0 +1,29 @@
+{
+    "containerDefinitions": [
+        {
+            "mountPoints": [
+                {
+                    "sourceVolume": "string",
+                    "containerPath": "/path/to/mount_volume",
+                    "readOnly": boolean
+                }
+            ]
+        }
+    ],
+    "volumes": [
+        {
+            "name": "string",
+            "dockerVolumeConfiguration": {
+                "scope": "string",
+                "autoprovision": boolean,
+                "driver": "string",
+                "driverOpts": {
+                    "key": "value"
+                },
+                "labels": {
+                    "key": "value"
+                }
+            }
+        }
+    ]
+}
