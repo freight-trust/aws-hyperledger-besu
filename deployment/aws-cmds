@@ -1,0 +1,9 @@
+ssh -N -L 5432:<task-private-ip>:5432  ec2-user@<container-instance-public-ip>
+
+aws ecs list-container-instances --cluster docker-volume-demo
+
+aws ecs update-container-instances-state --cluster docker-volume-demo --container-instances <container-instance-arn> --status DRAINING
+
+ ssh -N -L 5432:<task-private-ip>:5432  ec2-user@<container-instance-public-ip>
+ 
+ 
